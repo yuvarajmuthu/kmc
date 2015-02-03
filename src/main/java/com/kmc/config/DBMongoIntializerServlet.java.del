@@ -1,0 +1,31 @@
+package com.kmc.config;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.data.mongodb.core.MongoOperations;
+
+@WebServlet(name="dbMongoIntializerServlet", loadOnStartup=2)
+public class DBMongoIntializerServlet extends HttpServlet {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public void init(ServletConfig servletConfig) throws ServletException {
+		//System.console().printf("***entering DBMongoIntializerServlet ***");  
+		ApplicationContext ctx = new GenericXmlApplicationContext("SpringConfig.xml");
+		MongoOperations mongoOperations = (MongoOperations) ctx.getBean("mongoTemplate");
+		servletConfig.getServletContext().setAttribute("mongoOperations", mongoOperations);
+		//System.console().printf("Mongo DB Intialized");
+	}
+	
+	public void destroy() {
+		getServletContext().removeAttribute("mongoOperations");
+	}
+}
